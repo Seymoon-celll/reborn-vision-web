@@ -64,6 +64,15 @@ async function setLang(lang) {
   document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
   const btn = document.getElementById('lang-selected');
   if (btn) btn.textContent = `${LANGS[lang].flag} ${LANGS[lang].label}`;
+  // Update new-style header lang button (flag + code spans)
+  const flagEl = document.querySelector('.lang-select .lang-flag');
+  const codeEl = document.querySelector('.lang-select .lang-code');
+  if (flagEl) flagEl.textContent = LANGS[lang].flag;
+  if (codeEl) codeEl.textContent = lang.toUpperCase();
+  // Update active state on lang-option buttons
+  document.querySelectorAll('.lang-option').forEach(opt => {
+    opt.classList.toggle('active', opt.dataset.lang === lang);
+  });
 }
 
 function buildLangDropdown() {
@@ -102,7 +111,19 @@ function buildLangDropdown() {
   container.appendChild(dropdown);
 }
 
+// Expose globally for inline onclick handlers in HTML
+window.setLang = setLang;
+window.toggleLangMenu = function() {
+  const sel = document.getElementById('lang-select') || document.querySelector('.lang-select');
+  if (sel) sel.classList.toggle('open');
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   buildLangDropdown();
   setLang(getPreferredLang());
+  // Close new-style lang-select when clicking outside
+  document.addEventListener('click', (e) => {
+    const sel = document.getElementById('lang-select');
+    if (sel && !e.target.closest('#lang-select')) sel.classList.remove('open');
+  });
 });
