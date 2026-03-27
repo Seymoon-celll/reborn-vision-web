@@ -266,4 +266,3 @@ export default {
     contact_text: 'For any questions: seymoon.cell@gmail.com'
   }
 };
-};
